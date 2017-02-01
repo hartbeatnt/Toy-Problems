@@ -79,14 +79,23 @@ device.decode = function (w) {
   let characters = 
     ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
      'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-     '0','1','2','3','4','5','6','7','8','9','.',',','?',' ','$']
+     '0','1','2','3','4','5','6','7','8','9','.',',','?',' ','-']
   w.split('').forEach((chr,i)=>{
     let multiplyer = Math.pow(2,i+1);
+    while (multiplyer > 67) {
+      if (multiplyer - Math.pow(67*(i-5), 3) > 67) {
+        multiplyer -= Math.pow(67*(i-5), 3)
+      } else if (multiplyer - Math.pow(67*(i-5), 2) > 67) {
+        multiplyer -= Math.pow(67*(i-5), 2)
+      } else {
+        multiplyer -= 67
+      }
+    }
     let idx = characters.indexOf(chr)+1;
-    while (idx / multiplyer < 1 || (idx / multiplyer) % 1) {
+    while ((idx / multiplyer) % 1 > 0) {
       idx += 67
     }
-    console.log(i, chr, idx, multiplyer, characters[idx/multiplyer -1])
+    console.log(i, chr, characters[idx/multiplyer -1])
     result.push(characters[idx/multiplyer -1])
   })
   return result.join('') ; 
