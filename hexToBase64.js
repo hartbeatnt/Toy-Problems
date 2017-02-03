@@ -14,7 +14,7 @@ let base64 = 'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'
 const hexToBinary = hex => {
   let bytes = [];
   for(let i=0; i < hex.length-1; i+=2){
-    let hexByte = hex[i]+hex[i+1]
+    let hexByte = hex.substring(i, i+2)
     let binByte = parseInt(hexByte, 16).toString(2)
     while (binByte.length < 8) binByte = '0'+binByte
     bytes.push(binByte);
