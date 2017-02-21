@@ -71,11 +71,13 @@ const charCount = str => {
 }
 
 const stringScore = str => {
-  let commonEnglishLetters = 'ETAOINSHRDLUetaoinshrdlu'.split('')
+  let commonEnglishLetters = 'etaoinshrdlcumwfgypbvkjxqz '.split('')
   let score = 0;
-  let chars = charCount(str.toUpperCase());
+  let chars = charCount(str.toLowerCase());
   for (let char in chars) {
-    if (commonEnglishLetters.includes(char)) score++
+    commonEnglishLetters.includes(char) ?
+      score += commonEnglishLetters.length-commonEnglishLetters.indexOf(char) :
+      score -= 1 ;
   }
   return score;
 }
