@@ -6,10 +6,6 @@ and which provides data-size savings over base 64. Your task is to extend the St
 object with two new methods, toAscii85 and fromAscii85, which handle encoding and 
 decoding ASCII85 strings.
 
-As Python does not allow modifying the built-in string class, for Python the task is 
-to provide functions toAscii85(data) and fromAscii85(ascii85), which handle encoding 
-and decoding ASCII85 strings (instead of string object methods).
-
 The toAscii85 method should take no arguments and must encode the value of the string 
 to ASCII85, without any line breaks or other whitespace added to the native 
 ASCII85-encoded value.
@@ -27,9 +23,10 @@ Example:
 '<~ARTY*~>'.fromAscii85() should return easy
 '<~D/WrrEaa\'$~>'.fromAscii85() should return moderate
 '<~F)Po,GA(E,+Co1uAnbatCif~>'.fromAscii85() should return somewhat difficult
-You can learn all about ASCII85 here. And remember, this is a binary-to-ASCII encoding 
-scheme, so the input isn't necessarily always a readable string! A brief summary of 
-the salient points, however, is as follows:
+
+You can learn all about ASCII85 here -- https://en.wikipedia.org/wiki/Ascii85. And remember, 
+this is a binary-to-ASCII encoding scheme, so the input isn't necessarily always a readable 
+string! A brief summary of the salient points, however, is as follows:
 
 In general, four binary bytes are encoded into five ASCII85 characters.
 The character set that ASCII85 encodes into is the 85 characters between ASCII 33 (!) 
@@ -74,3 +71,22 @@ generateRandomBinaryData(num, len):
 
 */
 
+String.prototype.toAscii85 = function() {
+  let result = '~>'
+  let bytes = this
+    .toString()
+    .split('')
+    .map(char=>char.charCodeAt())
+    .map(char=>char.toString(2))
+    .map(byte=>{
+      while(byte.length<8) byte = '0'.concat(byte)
+      return byte
+    })
+  let int = parseInt(bytes.join(''), 2)
+  while (int > 85) {
+    result = String.fromCharCode(int % 85 + 33)+result
+    int /= 85
+  }
+  result = String.fromCharCode(Math.floor(int)+33)+result
+  return '<~'+result
+}
