@@ -72,8 +72,9 @@ generateRandomBinaryData(num, len):
 */
 
 String.prototype.toAscii85 = function() {
-  let result = '~>'
-  let bytes = this
+  let result = ''
+  let bytes = [];
+  let bin = this
     .toString()
     .split('')
     .map(char=>char.charCodeAt())
@@ -82,11 +83,21 @@ String.prototype.toAscii85 = function() {
       while(byte.length<8) byte = '0'.concat(byte)
       return byte
     })
-  let int = parseInt(bytes.join(''), 2)
-  while (int > 85) {
-    result = String.fromCharCode(int % 85 + 33)+result
-    int /= 85
-  }
-  result = String.fromCharCode(Math.floor(int)+33)+result
-  return '<~'+result
+    .join('')
+  let padding = 0;
+  for (let i = 0; i < bin.length; i+=32) bytes.push(bin.substring(i,i+32))
+  bytes.reverse().forEach(byte=>{
+    while(byte.length < 32) {
+      byte = byte+'0'
+      padding++
+    }
+    let int = parseInt(byte, 2)
+    while (int > 85) {
+      result = String.fromCharCode(int % 85 + 33)+result
+      int /= 85
+    }
+    result = String.fromCharCode(Math.floor(int)+33)+result
+  })
+  if (padding) result = result.slice(0, -Math.ceil(padding/8))
+  return '<~'+result+'~>'
 }
