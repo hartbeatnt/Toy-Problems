@@ -101,3 +101,18 @@ String.prototype.toAscii85 = function() {
   if (padding) result = result.slice(0, -Math.ceil(padding/8))
   return '<~'+result+'~>'
 }
+
+String.prototype.fromAscii85 = function() {
+  let ascii85 = this.slice(2,-2)
+  let blocks = [];
+  for (var i = 0; i <= this.length-5; i += 5) {
+    blocks.push(
+      ascii85.substring(i, i+5)
+      .split('')
+      .reverse()
+      .map(char=>char.charCodeAt())
+      .map(int=>int-33)
+    )
+  }
+  console.log(blocks)
+}
