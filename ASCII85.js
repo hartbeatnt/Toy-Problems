@@ -73,9 +73,10 @@ generateRandomBinaryData(num, len):
 
 String.prototype.toAscii85 = function() {
   let result = ''
-  let bytes = [];
+  let blocks = [];
+  let int;
+  let padding = 0;
   let bin = this
-    .toString()
     .split('')
     .map(char=>char.charCodeAt())
     .map(char=>char.toString(2))
@@ -84,35 +85,63 @@ String.prototype.toAscii85 = function() {
       return byte
     })
     .join('')
-  let padding = 0;
-  for (let i = 0; i < bin.length; i+=32) bytes.push(bin.substring(i,i+32))
-  bytes.reverse().forEach(byte=>{
-    while(byte.length < 32) {
-      byte = byte+'0'
+  for (let i = 0; i < bin.length; i+=32) {
+    blocks.push(bin.substring(i,i+32))
+  }
+  blocks.reverse().forEach(block=>{
+    while(block.length < 32) {
+      block = block+'0'
       padding++
     }
-    let int = parseInt(byte, 2)
-    while (int > 85) {
-      result = String.fromCharCode(int % 85 + 33)+result
-      int /= 85
+    int = parseInt(block, 2)
+    if (int === 0) result = '!!!!!'
+    else {
+      while (int > 85) {
+        result = String.fromCharCode(int % 85 + 33)+result
+        int /= 85
+      }
+      result = String.fromCharCode(Math.floor(int)+33)+result
     }
-    result = String.fromCharCode(Math.floor(int)+33)+result
   })
   if (padding) result = result.slice(0, -Math.ceil(padding/8))
-  return '<~'+result+'~>'
+  return '<~'+result.replace(/!!!!!/g,'z')+'~>'
 }
 
 String.prototype.fromAscii85 = function() {
-  let ascii85 = this.slice(2,-2)
+  let ascii85 = this.slice(2,-2).replace(/ /g,'')
   let blocks = [];
-  for (var i = 0; i <= this.length-5; i += 5) {
+  let padding = 0
+  while (ascii85.length % 5) {
+    ascii85+="u"
+    padding++
+  }
+  for (var i = 0; i <= ascii85.length-5; i += 5) {
     blocks.push(
       ascii85.substring(i, i+5)
       .split('')
       .reverse()
       .map(char=>char.charCodeAt())
-      .map(int=>int-33)
+      .map((num, i)=>(num-33)*Math.pow(85,i))
+      .reduce((a,b)=>a+b)
+      .toString(2)
     )
   }
-  console.log(blocks)
+  blocks = blocks.map((byte,i)=>{
+    let temp = []
+    while (byte.length < 32) {
+      byte = '0'+byte
+    }
+    blocks[i] = byte;
+    for(let i = 0; i < byte.length; i+=8) {
+      temp.push(byte.substring(i,i+8))
+    }
+    return temp
+      .map(byte=>parseInt(byte,2))
+      .map(num=>String.fromCharCode(num))
+      .join('');
+  })
+  return padding? 
+    blocks.join('').slice(0,-padding) : 
+    blocks.join('')
 }
+
