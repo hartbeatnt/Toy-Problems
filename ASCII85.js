@@ -94,21 +94,24 @@ String.prototype.toAscii85 = function() {
       padding++
     }
     int = parseInt(block, 2)
-    if (int === 0) result = '!!!!!'
-    else {
-      while (int > 85) {
-        result = String.fromCharCode(int % 85 + 33)+result
-        int /= 85
-      }
-      result = String.fromCharCode(Math.floor(int)+33)+result
+    // if (int === 0) result = '!!!!!'+result
+    while (int > 85) {
+      result = String.fromCharCode(int % 85 + 33)+result
+      int /= 85
     }
+    result = String.fromCharCode(Math.floor(int)+33)+result
+    while(block.startsWith('00000000')) {
+      block=block.slice(8);
+      result = "!"+result
+    }
+    result = result.replace(/!!!!!/g,'z')
   })
   if (padding) result = result.slice(0, -Math.ceil(padding/8))
-  return '<~'+result.replace(/!!!!!/g,'z')+'~>'
+  return '<~'+result+'~>'
 }
 
 String.prototype.fromAscii85 = function() {
-  let ascii85 = this.slice(2,-2).replace(/ /g,'')
+  let ascii85 = this.slice(2,-2).replace(/\s/g,'')
   let blocks = [];
   let padding = 0
   while (ascii85.length % 5) {
@@ -144,4 +147,3 @@ String.prototype.fromAscii85 = function() {
     blocks.join('').slice(0,-padding) : 
     blocks.join('')
 }
-
