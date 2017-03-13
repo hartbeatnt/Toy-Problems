@@ -35,5 +35,24 @@ snakes can be any length
 
 function snakesOn(aPlane) {
   let result = 0;
-  
+  const check = (row, col) => {
+    if (aPlane[row][col] === 'S') {
+      aPlane[row][col] = '_'
+      aPlane[row+1] && check(row+1, col)
+      aPlane[row-1] && check(row-1, col)
+      check(row, col+1)
+      check(row, col-1)
+    }
+  }
+
+  aPlane.forEach((row, i) => {
+    row.forEach((col, j) => {
+      if (col === 'S') {
+        result++
+        check(i, j)
+      }
+    })
+  })
+
+  return result;
 }
