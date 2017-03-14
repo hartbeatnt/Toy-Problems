@@ -24,5 +24,19 @@ Output: 7 -> 0 -> 8
  * @return {ListNode}
  */
 var addTwoNumbers = function(l1, l2) {
-    
+    let result = new ListNode(l1.val+l2.val);
+    const addNodes = (n1, n2, output, carryOver) => {
+      if (!n1) n1 = new Node(0);
+      if (!n2) n2 = new Node(0);
+      let sum = n1.val + n2.val + carryOver;
+      let overflow = false;
+      if (sum > 9) {
+        sum -= 10;
+        overflow = true;
+      }
+      output.next = new ListNode(sum)
+      addNodes(n1.next, n2.next, output.next, overflow ? 1: 0)
+    }
+    addNodes(l1.next, l2.next, result)
+    return result;
 };
