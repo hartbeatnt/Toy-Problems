@@ -15,3 +15,21 @@ What if the stock value goes down all day? In that case, the best profit will be
 You can do this in O(n) time and O(1) space!
 */
 
+const getMaxProfit = prices => {
+  if (prices.length < 2) {
+    return "price array must include at least two elements"
+  }
+  let minPrice = prices[0]
+  let maxProfit = prices[1] - prices[0]
+  prices.forEach(price=>{
+    if (price < minPrice) minPrice = price;
+    else {
+      let profit = price - minPrice;
+      if (profit > maxProfit) maxProfit = profit;
+    }
+  })
+  return maxProfit
+}
+
+let test = getMaxProfit([0,2,9,1,6,10])
+console.log(test)
