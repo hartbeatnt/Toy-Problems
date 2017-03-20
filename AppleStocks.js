@@ -21,15 +21,11 @@ const getMaxProfit = prices => {
   }
   let minPrice = prices[0]
   let maxProfit = prices[1] - prices[0]
-  prices.forEach(price=>{
+  prices.forEach((price, i)=>{
+    if (i===0) return
+    let profit = price - minPrice;
+    if (profit > maxProfit) maxProfit = profit;
     if (price < minPrice) minPrice = price;
-    else {
-      let profit = price - minPrice;
-      if (profit > maxProfit) maxProfit = profit;
-    }
   })
   return maxProfit
 }
-
-let test = getMaxProfit([0,2,9,1,6,10])
-console.log(test)
