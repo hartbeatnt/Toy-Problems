@@ -16,3 +16,19 @@ Does your function work if the input array contains zeroes? Remember—no divisi
 We can do this in O(n) time and O(n) space!
 We only need to allocate one new array of size n.
 */
+
+productsOfAllIntsExceptAtIndex = nums => {
+  let result = [1]
+  let temp = 1
+  for (let i = 1; i < nums.length; i++) {
+    result.push(result[i-1]*nums[i-1])
+  }
+  for (let i = nums.length; i > 0; i--) {
+    result[i-1] *= temp;
+    temp *= nums[i-1]
+  }
+  return result
+}
+
+let test = productsOfAllIntsExceptAtIndex([3])
+console.log(test)
