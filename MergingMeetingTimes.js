@@ -42,19 +42,20 @@ We can do this in O(nlgn) time.
 */
 
 const condenseMeetingTimes = mtgs => {
-  let results = mtgs.slice()
-  results.sort((a,b)=>a[0]-b[0])
-  for (let i = results.length-1; i > 0; i--) {
-    console.log(i)
-    if (results[i][0] <= results[i-1][1]) {
-      if (results[i][1] >= results[i-1][1]) {
-        results[i-1][1] = results[i][1]
+  mtgs.sort((a,b)=>a[0]-b[0])
+  for (let i = mtgs.length-1; i > 0; i--) {
+    if (mtgs[i][0] <= mtgs[i-1][1]) {
+      if (mtgs[i][1] >= mtgs[i-1][1]) {
+        mtgs[i-1][1] = mtgs[i][1]
       }
-      results.splice(i,1)
+      mtgs.splice(i,1)
     }
-    if (results[i] && results[i][1] <= results[i-1][1]) {
-      results.splice(i,1)
+    if (mtgs[i] && mtgs[i][1] <= mtgs[i-1][1]) {
+      mtgs.splice(i,1)
     }
   }
-  return results
+  return mtgs
 }
+
+let test = condenseMeetingTimes([[0, 1], [4, 8], [10, 12], [9, 10]])
+console.log(test)
