@@ -24,7 +24,7 @@ productsOfAllIntsExceptAtIndex = nums => {
     result.push(result[i-1]*nums[i-1])
   }
   for (let i = nums.length; i > 0; i--) {
-    result[i-1] *= temp;
+    result[i-1] *= temp
     temp *= nums[i-1]
   }
   return result
