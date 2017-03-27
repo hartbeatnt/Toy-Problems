@@ -26,5 +26,20 @@ but there's a cleaner bottom-up approach.
 */
 
 const makeChange = (sum, coins) => {
-  
+  let lookUp = {}
+  let bigCoin = coins.reduce((a,b)=>b<=sum?b:a)
+  coins.forEach((coin, i)=>{
+    if (coin > bigCoin) return
+    lookUp[coin]=[1];
+    let above, left;
+    for (let j = 1; j <= sum; j++) {
+      above = lookUp[coins[i-1]] ? lookUp[coins[i-1]][j] : 0
+      left = lookUp[coins[i]][j-coins[i]] ? lookUp[coins[i]][j-coins[i]] : 0
+      lookUp[coin][j] = above + left;
+    }
+  })
+  return lookUp[bigCoin][sum];
 }
+
+let test = makeChange(17, [1, 2, 5, 10, 50, 100,])
+console.log(test)
