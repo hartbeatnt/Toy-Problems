@@ -70,10 +70,6 @@ function threeGlasses(cap) {
     }
   }
 
-  CupSet.prototype.fill = function(i) {
-    this.cups[i] = new Cup(this.cups[i].maxVol)
-  }
-
   let results = {};
 
   const recurse = cups => {
@@ -81,28 +77,24 @@ function threeGlasses(cap) {
     if (results[used] || results[used]===0) return;
     results[used] = cups.totalVol();
     cups.cups.forEach((cup,i)=> {
-      // let newCups1 = new CupSet(cups.getMaxVols(), cups.getCurVols())
+      let newCups1 = new CupSet(cups.getMaxVols(), cups.getCurVols())
       let newCups2 = new CupSet(cups.getMaxVols(), cups.getCurVols())
       let newCups3 = new CupSet(cups.getMaxVols(), cups.getCurVols())
-      let newCups4 = new CupSet(cups.getMaxVols(), cups.getCurVols())
-      // newCups1.fill(i)
-      newCups2.pour(i)
-      newCups3.cups[i+1] 
-        ? newCups3.pour(i, i+1)
-        : newCups3.pour(i, 0)
-      newCups4.cups[i+2]
-        ? newCups4.pour(i, i+2)
-        : newCups4.pour(i, i-1)
-      // recurse(newCups1)
+      newCups1.pour(i)
+      newCups2.cups[i+1] 
+        ? newCups2.pour(i, i+1)
+        : newCups2.pour(i, 0)
+      newCups3.cups[i+2]
+        ? newCups3.pour(i, i+2)
+        : newCups3.pour(i, i-1)
+      recurse(newCups1)
       recurse(newCups2)
       recurse(newCups3)
-      recurse(newCups4)
     })
-    // console.log(results)
   }
+
   let cups = new CupSet(cap)
   recurse(cups)
-  console.log(results)
   return( 
     Object
     .keys(results)
