@@ -95,6 +95,9 @@ function threeGlasses(cap) {
 
   let cups = new CupSet(cap)
   recurse(cups)
+
+  // the return statement could be optimized by uzing a lookup
+  // object to find duplicates rather than using the indexOf method
   return( 
     Object
     .keys(results)
