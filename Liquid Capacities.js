@@ -33,12 +33,20 @@ function threeGlasses(cap) {
     this.maxVol = max;
     this.curVol = cur || cur === 0 ? cur : max;
   }
-  const CupSet = function(cupArray) {
-    this.cups = cupArray.map(vol=>new Cup(vol))
+  const CupSet = function(maxVolArray, curVolArray) {
+    if (!curVolArray)
+      this.cups = maxVolArray.map(vol=>new Cup(vol))
+    else {
+      this.cups = maxVolArray.map((vol,i)=>new Cup(vol, curVolArray[i]))
+    }
   }
 
-  CupSet.prototype.getVols = function() {
+  CupSet.prototype.getCurVols = function() {
     return this.cups.map(cup=>cup.curVol)
+  }
+
+  CupSet.prototype.getMaxVols = function() {
+    return this.cups.map(cup=>cup.maxVol)
   }
 
   CupSet.prototype.totalVol = function() {
@@ -49,54 +57,60 @@ function threeGlasses(cap) {
     if (!i2 && i2 !== 0) {
       this.cups[i1] = new Cup(this.cups[i1].maxVol, 0)
     } else {
-      let 
+      let cup1cur = this.cups[i1].curVol;
+      let cup1max = this.cups[i1].maxVol;
+      let cup2cur = this.cups[i2].curVol;
+      let cup2max = this.cups[i2].maxVol;
+      while (cup1cur > 0 && cup2cur < cup2max) {
+        cup1cur--;
+        cup2cur++;        
+      }
+      this.cups[i1] = new Cup(cup1max, cup1cur)
+      this.cups[i2] = new Cup(cup2max, cup2cur)
     }
   }
 
   CupSet.prototype.fill = function(i) {
     this.cups[i] = new Cup(this.cups[i].maxVol)
   }
-  
-  const getVolume = cups => {
-    return cups.reduce((a,b)=>a+b.curVol,0)
-  }
 
   let results = {};
 
   const recurse = cups => {
-    let used = JSON.stringify(cups);
-    if (results[used] || results[used]===0) {console.log(used);return};
-    // cups = cups.slice();
-    // results[JSON.stringify(cups)] = getVolume(cups);
-    // cups.forEach((cup,i)=> {
-    //   let newCups1 = cups.slice();
-    //   let newCups2 = cups.slice();
-    //   let newCups3 = cups.slice();
-    //   let newCups4 = cups.slice();
-    //   newCups1[i].fill()
-    //   newCups2[i].pour()
-    //   newCups3[i+1] 
-    //     ? newCups3[i].pour(newCups4[i+1])
-    //     : newCups3[i].pour(newCups4[0])
-    //   newCups4[i+2]
-    //     ? newCups4[i].pour(newCups4[i+2])
-    //     : newCups4[i].pour(newCups4[i-1])
-    //   recurse(newCups1)
-    //   recurse(newCups2)
-    //   recurse(newCups3)
-    //   recurse(newCups4)
-    // })
-
+    let used = JSON.stringify(cups.getCurVols());
+    if (results[used] || results[used]===0) return;
+    results[used] = cups.totalVol();
+    cups.cups.forEach((cup,i)=> {
+      // let newCups1 = new CupSet(cups.getMaxVols(), cups.getCurVols())
+      let newCups2 = new CupSet(cups.getMaxVols(), cups.getCurVols())
+      let newCups3 = new CupSet(cups.getMaxVols(), cups.getCurVols())
+      let newCups4 = new CupSet(cups.getMaxVols(), cups.getCurVols())
+      // newCups1.fill(i)
+      newCups2.pour(i)
+      newCups3.cups[i+1] 
+        ? newCups3.pour(i, i+1)
+        : newCups3.pour(i, 0)
+      newCups4.cups[i+2]
+        ? newCups4.pour(i, i+2)
+        : newCups4.pour(i, i-1)
+      // recurse(newCups1)
+      recurse(newCups2)
+      recurse(newCups3)
+      recurse(newCups4)
+    })
+    // console.log(results)
   }
   let cups = new CupSet(cap)
-  console.log(cups.getVols())
-  // recurse(new CupSet(cap))
-  // console.log(results)
-  // return Object
-  //   .keys(results)
-  //   .map(key=>results[key])
-  //   .filter((v,i,a)=>a.indexOf(v)===i)
-  //   .length
+  recurse(cups)
+  console.log(results)
+  return( 
+    Object
+    .keys(results)
+    .map(key=>results[key])
+    .filter((v,i,a)=>a.indexOf(v)===i)
+    .sort((a,b)=>a-b)
+    .length-1
+  )
 }
 
 console.log(threeGlasses([16,5,3]))
