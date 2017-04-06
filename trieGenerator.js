@@ -18,11 +18,13 @@ class Trie {
     })
   }
   hasLeaf(str) {
-    let temp = this;
-    return str
-      .split('')
-      .every(char=>temp = temp[char]) && !!temp.leaf 
+    return !!this.containsString(this, str).leaf
   }
+  getLeaves(prefix) {
+    if (!prefix) prefix = '';
+    return this.getLeavesFrom(this.containsString(this, prefix), prefix, [])
+  }
+  // utility helpers:
   getLeavesFrom(node,str,results) {
     Object.keys(node).forEach(key=>{
       if (node[key].leaf) results.push(str+key)
@@ -30,14 +32,11 @@ class Trie {
     })
     return results
   }
-  getLeaves(){
-    return this.getLeavesFrom(this,'',[])
-  }
-  getLeavesWithPrefix(str) {
-    let temp = this;
-    return str.split('').every(char=> temp = temp[char])
-      ? this.getLeavesFrom(temp, str, [])
-      : []
+  containsString(node, str) {
+    let temp = node;
+    return str.split('').every(char => temp = temp[char])
+      ? temp
+      : false
   }
 }
 
@@ -51,7 +50,8 @@ stringTrie.addLeaf('YO MAMA')
 console.log(stringTrie.getLeaves())
 console.log(stringTrie.hasLeaf('test'))
 console.log(stringTrie.hasLeaf('tes'))
-console.log(stringTrie.getLeavesWithPrefix('tea'))
+console.log(stringTrie.getLeaves('t'))
+console.log(stringTrie.getLeaves('tx'))
 
 /*{
   "t":{
