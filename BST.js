@@ -9,12 +9,21 @@ class BST {
     this.left = null;
     this.right = null;
   }
-  inOrderTraverse(callback){
+  insert(val) {
+    if (val <= this.value) {
+      if (this.left) this.left.insert(val)
+      else return this.left = new BST(val)
+    } else {
+      if (this.right) this.right.insert(val)
+      else return this.right = new BST(val)
+    }
+  }
+  inOrderTraverse(callback) {
     this.left && this.left.inOrderTraverse(callback);
     callback(this);
     this.right && this.right.inOrderTraverse(callback);
   }
-  validate(){
+  validate() {
     let valid = true;
     let prev = null;
     this.inOrderTraverse((node)=>{
@@ -41,14 +50,6 @@ BST1.left.right = new BST(3)
 BST1.right.right = new BST(7)
 BST1.right.left = new BST(5)
 
-let BST2 = new BST(4)
-BST2.left = new BST(2)
-BST2.right = new BST(6)
-BST2.left.left = new BST(1)
-BST2.left.right = new BST(5)
-BST2.right.right = new BST(7)
-BST2.right.left = new BST(5)
-
 let sorted = []
 let pushToSorted = node => sorted.push(node.value)
 BST1.inOrderTraverse(pushToSorted)
@@ -61,7 +62,29 @@ assert(
   BST1.validate() === true, 
   'validate should return true for valid BST'
 )
+
+let BST2 = new BST(4)
+BST2.left = new BST(2)
+BST2.right = new BST(6)
+BST2.left.left = new BST(1)
+BST2.left.right = new BST(5)
+BST2.right.right = new BST(7)
+BST2.right.left = new BST(5)
+
 assert(
   BST2.validate() === false, 
   'validate should return false for invalid BST'
+)
+
+let BST3 = new BST(4)
+BST3.insert(1)
+BST3.insert(2)
+BST3.insert(3)
+BST3.insert(5)
+BST3.insert(6)
+BST3.insert(7)
+
+assert(
+  BST3.validate(), 
+  'insert should place new nodes in the proper position'
 )
