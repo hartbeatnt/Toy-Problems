@@ -10,10 +10,19 @@ class BST {
     this.right = null;
   }
   inOrderTraverse(callback){
-    // fill me in
+    this.left && this.left.inOrderTraverse(callback);
+    callback(this);
+    this.right && this.right.inOrderTraverse(callback);
   }
   validate(){
-    // fill me in
+    let valid = true;
+    let prev = null;
+    this.inOrderTraverse((node)=>{
+      if (!prev) return prev = node.value;
+      if (prev > node.value) return valid = false;
+      return prev = node.value;
+    })
+    return valid;
   }
 }
 
